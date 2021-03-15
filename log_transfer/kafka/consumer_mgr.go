@@ -23,11 +23,11 @@ func Init(address []string, allConf []common.CollectionEntry) (err error) {
 		topicList:   common.GetTopicFromCollectionEntry(allConf),
 		// 初始化新配置的channel（无缓冲区的）
 		topicChan: make(chan []string),
+		address:   address,
 	}
 	for _, topic := range cMgr.topicList {
 		// 创建一个kafka消费者
-		kc := newKafkaConsumer(address, topic)
-		err = kc.init()
+		kc, err := newKafkaConsumer(address, topic)
 		if err != nil {
 			logrus.Errorf("[kafka] Start consumer for topic: %s failed, err: %v", topic, err)
 			continue
@@ -57,8 +57,7 @@ func (cMgr *consumerMgr) watch() {
 				continue
 			}
 			// 2、原来没有的需要新创建一个消费者
-			kc := newKafkaConsumer(cMgr.address, topic)
-			err := kc.init()
+			kc, err := newKafkaConsumer(cMgr.address, topic)
 			if err != nil {
 				logrus.Errorf("[kafka] Start consumer for topic: %s failed, err: %v", topic, err)
 				continue

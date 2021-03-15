@@ -23,11 +23,12 @@ var (
 
 // 将日志数据写入ES中
 func Init(address string, indexes []string, channelSize, goroutineNum int) (err error) {
-	esClient = new(ESClient)
-	esClient.logDataChanMap = make(map[string]chan interface{})
-	esClient.goroutineNum = goroutineNum
-	esClient.channelSize = channelSize
-	esClient.indexes = indexes
+	esClient = &ESClient{
+		logDataChanMap: make(map[string]chan interface{}),
+		goroutineNum:   goroutineNum,
+		channelSize:    channelSize,
+		indexes:        indexes,
+	}
 	esClient.client, err = elastic.NewClient(elastic.SetURL("http://" + address))
 	if err != nil {
 		logrus.Errorf("[es] Connect to ES failed, err: %v", err)

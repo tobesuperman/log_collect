@@ -15,15 +15,11 @@ type kafkaConsumer struct {
 }
 
 // newKafkaConsumer 根据address和topic创建消费者对象
-func newKafkaConsumer(address []string, topic string) *kafkaConsumer {
-	kc := &kafkaConsumer{
+func newKafkaConsumer(address []string, topic string) (kc *kafkaConsumer, err error) {
+	kc = &kafkaConsumer{
 		address: address,
 		topic:   topic,
 	}
-	return kc
-}
-
-func (kc *kafkaConsumer) init() (err error) {
 	kc.consumer, err = sarama.NewConsumer(kc.address, nil)
 	return
 }
